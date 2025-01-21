@@ -19,4 +19,5 @@ jobs:
           script: |
             echo "Connected to EC2 instance."
             git pull origin main
+            mkdir abc
             # Add any commands to start or restart your application here.
