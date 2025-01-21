@@ -18,6 +18,5 @@ jobs:
           port: 22
           script: |
             echo "Connected to EC2 instance."
-            git pull origin main
-            mkdir abc
-            # Add any commands to start or restart your application here.
+            mkdir -p ~/test-folder
+            echo "Folder 'test-folder' created successfully."
