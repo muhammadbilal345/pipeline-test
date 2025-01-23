@@ -18,6 +18,8 @@ jobs:
           port: ${{ secrets.EC2_PORT }}
           script: |
             echo "Connected to EC2 instance."
+            
+            # Check if the repository already exists and pull or clone the latest code
             if [ -d ~/pipeline-test ]; then
               echo "Repository exists. Pulling latest changes..."
               cd ~/pipeline-test
@@ -27,4 +29,25 @@ jobs:
               echo "Repository not found. Cloning repository..."
               git clone https://github.com/muhammadbilal345/pipeline-test.git ~/pipeline-test
             fi
+            
             echo "Code deployment complete."
+            
+            # Navigate to the project directory
+            cd ~/pipeline-test
+            
+            # Kill any existing instances of the script
+            echo "Checking for existing script instances..."
+            pkill -f "python3 app.py" || echo "No existing script instances found."
+            
+            # Install required dependencies
+            echo "Installing dependencies..."
+            if [ -f requirements.txt ]; then
+              pip3 install -r requirements.txt
+            else
+              echo "No requirements.txt file found. Skipping dependency installation."
+            fi
+            
+            # Start the application
+            echo "Starting the application..."
+            nohup python3 app.py > app.log 2>&1 &
+            echo "Application started successfully with nohup."
