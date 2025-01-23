@@ -30,14 +30,14 @@ jobs:
               git clone https://github.com/muhammadbilal345/pipeline-test.git ~/pipeline-test
             fi
             
-            echo "Code deployment complete."
-            
-            # Navigate to the project directory
-            cd ~/pipeline-test
+            echo "Code deployment complete."            
             
             # Kill any existing instances of the script
             echo "Checking for existing script instances..."
-            # pkill -f "python3 app.py" || echo "No existing script instances found."
+            pkill -f "pipeline-test/python3 app.py" || echo "No existing script instances found."
+
+            echo "Activating venv"
+            source venv/bin/activate
             
             # Install required dependencies
             echo "Installing dependencies..."
@@ -49,6 +49,6 @@ jobs:
             
             # Start the application with nohup and disown
             echo "Starting the application..."
-            nohup python3 app.py > app.log 2>&1 &
-            disown
+            source venv
+            nohup python3 app.py &
             echo "Application started successfully with nohup."
