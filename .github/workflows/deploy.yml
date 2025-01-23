@@ -18,11 +18,13 @@ jobs:
           port: ${{ secrets.EC2_PORT }}
           script: |
             echo "Connected to EC2 instance."
-            echo "Pulling latest code..."
-            if [ -d .git ]; then
+            if [ -d ~/pipeline-test ]; then
+              echo "Repository exists. Pulling latest changes..."
+              cd ~/pipeline-test
               git reset --hard
               git pull origin main
             else
-              git clone https://github.com/muhammadbilal345/pipeline-test.git .
+              echo "Repository not found. Cloning repository..."
+              git clone https://github.com/muhammadbilal345/pipeline-test.git ~/pipeline-test
             fi
-            echo "Latest code pulled successfully."
+            echo "Code deployment complete."
