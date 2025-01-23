@@ -49,5 +49,6 @@ jobs:
             
             # Start the application
             echo "Starting the application..."
-            nohup python3 app.py > app.log 2>&1 &
+            pwd
+            nohup python3 app.py &
             echo "Application started successfully with nohup."
