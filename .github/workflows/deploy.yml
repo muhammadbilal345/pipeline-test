@@ -18,5 +18,11 @@ jobs:
           port: ${{ secrets.EC2_PORT }}
           script: |
             echo "Connected to EC2 instance."
-            mkdir -p ~/test-folder
-            echo "Folder 'test-folder' created successfully."
+            echo "Pulling latest code..."
+            if [ -d .git ]; then
+              git reset --hard
+              git pull origin main
+            else
+              git clone https://github.com/muhammadbilal345/pipeline-test.git .
+            fi
+            echo "Latest code pulled successfully."
