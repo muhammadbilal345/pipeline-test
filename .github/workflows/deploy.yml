@@ -47,8 +47,8 @@ jobs:
               echo "No requirements.txt file found. Skipping dependency installation."
             fi
             
-            # Start the application
+            # Start the application with nohup and disown
             echo "Starting the application..."
-            pwd
-            nohup python3 app.py &
+            nohup python3 app.py > app.log 2>&1 &
+            disown
             echo "Application started successfully with nohup."
