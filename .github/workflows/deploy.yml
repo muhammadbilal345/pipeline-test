@@ -37,7 +37,7 @@ jobs:
             
             # Kill any existing instances of the script
             echo "Checking for existing script instances..."
-            pkill -f "python3 app.py" || echo "No existing script instances found."
+            # pkill -f "python3 app.py" || echo "No existing script instances found."
             
             # Install required dependencies
             echo "Installing dependencies..."
