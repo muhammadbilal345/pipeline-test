@@ -34,7 +34,7 @@ jobs:
             
             # Kill any existing instances of the script
             echo "Checking for existing script instances..."
-            pkill -f "pipeline-test/python3 app.py" || echo "No existing script instances found."
+            pgrep -f "python3 app.py" && pkill -f "python3 app.py" || echo "No existing script instances found."
 
             echo "Activating venv"
             source venv/bin/activate
@@ -49,6 +49,5 @@ jobs:
             
             # Start the application with nohup and disown
             echo "Starting the application..."
-            source venv
-            nohup python3 app.py &
+            nohup python3 pipeline-test/app.py &
             echo "Application started successfully with nohup."
