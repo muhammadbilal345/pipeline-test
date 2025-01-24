@@ -18,6 +18,8 @@ jobs:
           port: ${{ secrets.EC2_PORT }}
           script: |
             echo "Connected to EC2 instance."
+            
+            # Check if the repository already exists and pull or clone the latest code
             if [ -d ~/pipeline-test ]; then
               echo "Repository exists. Pulling latest changes..."
               cd ~/pipeline-test
@@ -27,4 +29,22 @@ jobs:
               echo "Repository not found. Cloning repository..."
               git clone https://github.com/muhammadbilal345/pipeline-test.git ~/pipeline-test
             fi
-            echo "Code deployment complete."
+            
+            echo "Code deployment complete."            
+            
+            # Kill any existing instances of the script
+            echo "Restarting pm2 app"
+            pm2 restart app
+
+            # echo "Activating venv"
+            # source venv/bin/activate
+            
+            # Install required dependencies
+            echo "Installing dependencies..."
+            if [ -f requirements.txt ]; then
+              pip install -r requirements.txt
+            else
+              echo "No requirements.txt file found. Skipping dependency installation."
+            fi
+
+            echo "completed"
