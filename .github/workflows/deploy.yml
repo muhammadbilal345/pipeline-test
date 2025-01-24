@@ -42,7 +42,7 @@ jobs:
             # Install required dependencies
             echo "Installing dependencies..."
             if [ -f requirements.txt ]; then
-              pip3 install -r requirements.txt
+              pip install -r requirements.txt
             else
               echo "No requirements.txt file found. Skipping dependency installation."
             fi
