@@ -33,11 +33,11 @@ jobs:
             echo "Code deployment complete."            
             
             # Kill any existing instances of the script
-            echo "Checking for existing script instances..."
-            pgrep -f "python3 app.py" && pkill -f "python3 app.py" || echo "No existing script instances found."
+            echo "Restarting pm2 app"
+            pm2 restart app
 
-            echo "Activating venv"
-            source venv/bin/activate
+            # echo "Activating venv"
+            # source venv/bin/activate
             
             # Install required dependencies
             echo "Installing dependencies..."
@@ -46,8 +46,5 @@ jobs:
             else
               echo "No requirements.txt file found. Skipping dependency installation."
             fi
-            
-            # Start the application with nohup and disown
-            echo "Starting the application..."
-            nohup python3 pipeline-test/app.py &
-            echo "Application started successfully with nohup."
+
+            echo "completed"
