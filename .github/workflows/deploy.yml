@@ -1,3 +1,56 @@
+# name: Deploy to EC2
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Deploy code to EC2
+#         uses: appleboy/ssh-action@v0.1.10
+#         with:
+#           host: ${{ secrets.EC2_HOST }}
+#           username: ${{ secrets.EC2_USER }}
+#           key: ${{ secrets.EC2_KEY }}
+#           port: ${{ secrets.EC2_PORT }}
+#           script: |
+#             echo "Connected to EC2 instance."
+            
+#             # Check if the repository already exists and pull or clone the latest code
+#             if [ -d ~/pipeline-test ]; then
+#               echo "Repository exists. Pulling latest changes..."
+#               cd ~/pipeline-test
+#               git reset --hard
+#               git pull origin main
+#             else
+#               echo "Repository not found. Cloning repository..."
+#               git clone https://github.com/muhammadbilal345/pipeline-test.git ~/pipeline-test
+#             fi
+            
+#             echo "Code deployment complete."            
+            
+#             # Kill any existing instances of the script
+#             echo "Restarting pm2 app"
+#             pm2 restart app
+
+#             # echo "Activating venv"
+#             # source venv/bin/activate
+            
+#             # Install required dependencies
+#             echo "Installing dependencies..."
+#             if [ -f requirements.txt ]; then
+#               pip install -r requirements.txt
+#             else
+#               echo "No requirements.txt file found. Skipping dependency installation."
+#             fi
+
+#             echo "completed"
+
+
+
 name: Deploy to EC2
 
 on:
@@ -19,32 +72,36 @@ jobs:
           script: |
             echo "Connected to EC2 instance."
             
-            # Check if the repository already exists and pull or clone the latest code
+            # Navigate to the project directory and pull changes
             if [ -d ~/pipeline-test ]; then
               echo "Repository exists. Pulling latest changes..."
               cd ~/pipeline-test
+              git fetch origin main
+              CHANGED_FILES=$(git diff --name-only HEAD..origin/main)
               git reset --hard
               git pull origin main
             else
               echo "Repository not found. Cloning repository..."
               git clone https://github.com/muhammadbilal345/pipeline-test.git ~/pipeline-test
+              cd ~/pipeline-test
+              CHANGED_FILES=$(git ls-files)
             fi
             
-            echo "Code deployment complete."            
+            echo "Code deployment complete."
             
-            # Kill any existing instances of the script
-            echo "Restarting pm2 app"
-            pm2 restart app
-
-            # echo "Activating venv"
-            # source venv/bin/activate
+            # Define file-to-process mapping
+            declare -A file_process_map=(
+              ["app.py"]="app"
+            )
             
-            # Install required dependencies
-            echo "Installing dependencies..."
-            if [ -f requirements.txt ]; then
-              pip install -r requirements.txt
-            else
-              echo "No requirements.txt file found. Skipping dependency installation."
-            fi
+            # Restart processes for updated files
+            for file in $CHANGED_FILES; do
+              if [[ ${file_process_map[$file]} ]]; then
+                process_name=${file_process_map[$file]}
+                echo "Restarting pm2 process: $process_name for updated file: $file"
+                pm2 restart "$process_name"
+              else
+                echo "No process mapped for $file. Skipping..."
+              fi
+            done
 
-            echo "completed"
